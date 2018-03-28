@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>My Dashboard</title>
+  <script src="mqtt.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+  <h1>Dashboard: The Publisher & Subscriber</h1>
+  <button onclick="turnOn()">Turn on Light</button>
+  <button onclick="turnOff()">Turn off Light</button>
+  <script type="text/javascript">
+    function setupBroker() {
+      console.log('setting up broker')
+      
+      //To Do
+      window.client = mqtt.connect('wss://m14.cloudmqtt.com:34864', {
+        username: 'admin',
+        password: 'admin',
+        clientId: 'Dashboard'
+      })
+      window.client.on('connect', function () {
+        console.log('Connected')
+        subscribeData()
+      });
+    }
+
+    function subscribeData() {
+      window.client.subscribe("#")
+      window.client.on("message", function (topic, payload) {
+        console.log([topic, payload].join(':')) // mqtt/demo:hi how are you
+      })
+    }
+
+    function turnOff() {
+      console.log('turning off light')
+      window.client.publish('/light', 'off')
+    }
+
+    function turnOn() {
+      console.log('turning on light')
+      window.client.publish('/light', 'on')
+    }
+
+    document.onload = setupBroker()
+  </script>
+</body>
+
+</html>

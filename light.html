@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Dashboard</title>
+    <script src="mqtt.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+    <h1>Light Sensor: The Subscriber</h1>
+    <h2>Light is:
+        <span id="status" style="color:blue;">OFF</span>
+    </h2>
+    <script type="text/javascript">
+        function setupBroker() {
+            console.log('setting up broker')
+
+            //To Do
+            window.client = mqtt.connect('wss://m14.cloudmqtt.com:34864', {
+                username: 'admin',
+                password: 'admin',
+                clientId: 'Light'
+            })
+            window.client.on('connect', function () {
+                console.log('Connected')
+                subscribeData()
+            });
+        }
+
+        function subscribeData() {
+            window.client.subscribe("/light")
+            window.client.on("message", function (topic, payload) {
+                console.log([topic, payload].join(':')) // mqtt/demo:hi how are you
+                var status = [payload].join()
+                if (status === 'off') {
+                    turnOff()
+                } else {
+                    turnOn()
+                }
+            })
+        }
+
+        function turnOff() {
+            console.log('turning off light')
+            //   window.client.publish('/light', 'off')
+            var theDiv = document.getElementById('status');
+            theDiv.innerText = 'OFF'
+        }
+
+        function turnOn() {
+            console.log('turning on light')
+            //   window.client.publish('/light', 'on')
+            var theDiv = document.getElementById('status');
+            theDiv.innerText = 'ON'
+        }
+
+        document.onload = setupBroker()
+    </script>
+</body>
+
+</html>

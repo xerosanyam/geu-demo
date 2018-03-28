@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>My Dashboard</title>
+	<script src="mqtt.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+	<h1>Temperature Sensor: The Publisher</h1>
+	<script type="text/javascript">
+		function setupBroker() {
+			console.log('setting up broker')
+
+			// TODO
+			window.client = mqtt.connect('wss://m14.cloudmqtt.com:34864', {
+				username: 'temp',
+				password: 'temp',
+				clientId: 'Temperature Sensor'
+			})
+
+			window.client.on('connect', function () {
+				console.log('Connected')
+				sendData()
+			});
+		}
+
+		function sendData() {
+			setInterval(function () {
+				var t = (Math.random() * 100).toFixed(2)
+				window.client.publish('/temp', t)
+				console.log('sent temp', t)
+			}, 5000)
+		}
+		document.onload = setupBroker()
+	</script>
+</body>
+
+</html>
